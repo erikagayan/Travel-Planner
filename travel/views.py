@@ -7,6 +7,7 @@ from rest_framework.exceptions import ValidationError
 
 from travel.filters import ProjectPlaceFilter, TravelProjectFilter
 from travel.models import ProjectPlace, TravelProject
+from travel.rest_exceptions import Conflict
 from travel.serializers import (
     ProjectPlaceSerializer,
     ProjectPlaceUpdateSerializer,
@@ -18,7 +19,7 @@ from travel.serializers import (
 class TravelProjectViewSet(viewsets.ModelViewSet):
     queryset = TravelProject.objects.annotate(
         places_count=Count('places', distinct=True),
-    )
+    ).order_by('-created_at')
     filter_backends = [DjangoFilterBackend]
     filterset_class = TravelProjectFilter
 
@@ -60,6 +61,4 @@ class ProjectPlaceViewSet(viewsets.ModelViewSet):
         try:
             serializer.save(project=project)
         except IntegrityError:
-            raise ValidationError(
-                'This artwork is already in the project.',
-            ) from None
+            raise Conflict('This artwork is already in the project.') from None

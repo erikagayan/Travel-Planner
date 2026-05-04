@@ -1,4 +1,4 @@
-"""Art Institute of Chicago API — валидация и загрузка произведений."""
+"""Art Institute of Chicago API client: lookup and search artworks."""
 from __future__ import annotations
 
 import requests
@@ -8,7 +8,7 @@ from requests.exceptions import Timeout as RequestsTimeout
 
 from .exceptions import ServiceUnavailableError
 
-ARTWORK_CACHE_TTL = 3600  # 1 час
+ARTWORK_CACHE_TTL = 3600  # 1 hour
 ARTWORK_CACHE_KEY = 'artic:artwork:{id}'
 
 
@@ -29,10 +29,7 @@ class ArticService:
             ) from exc
 
     def get_artwork(self, external_id: str) -> dict | None:
-        """
-        Валидация места: GET artworks/{id}?fields=...
-        Возвращает dict с полями API или None при 404.
-        """
+        """GET artworks/{id} with field projection; returns data dict or None on 404."""
         key = ARTWORK_CACHE_KEY.format(id=external_id)
         cached = cache.get(key)
         if cached is not None:
@@ -51,11 +48,11 @@ class ArticService:
         return payload if isinstance(payload, dict) else None
 
     def validate_artwork(self, external_id: str) -> bool:
-        """Место существует во внешнем API."""
+        """Return True if the artwork exists in the external API."""
         return self.get_artwork(external_id) is not None
 
     def search_artworks(self, query: str) -> dict:
-        """Поиск произведений (сырой ответ API)."""
+        """Search artworks; returns raw API JSON."""
         q = (query or '').strip()
         if not q:
             return {'data': [], 'pagination': {'total': 0, 'offset': 0, 'limit': 0}}

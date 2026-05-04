@@ -1,5 +1,5 @@
 class ServiceUnavailableError(Exception):
-    """Внешний сервис недоступен (сеть, таймаут). Сообщение уходит клиенту API."""
+    """Upstream API unreachable (timeout/connection). Message is safe for clients."""
 
     def __init__(self, message: str = 'Art Institute service is temporarily unavailable.'):
         self.message = message
