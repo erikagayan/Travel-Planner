@@ -1,0 +1,8 @@
+asgiref==3.11.1
+Django==6.0.4
+sqlparse==0.5.5
+djangorestframework==3.16.0
+django-filter==25.1
+requests==2.32.3
+python-dotenv==1.0.1
+drf-spectacular==0.28.0
