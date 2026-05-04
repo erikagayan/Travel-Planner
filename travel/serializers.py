@@ -96,7 +96,7 @@ class ProjectPlaceSerializer(serializers.ModelSerializer):
             'visited',
             'added_at',
         )
-        read_only_fields = ('id', 'title', 'added_at')
+        read_only_fields = ('id', 'project', 'title', 'added_at')
 
     @transaction.atomic
     def create(self, validated_data):
