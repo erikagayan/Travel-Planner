@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-#k$o+61$y1izl^bbf)=z09!0@1!8y_d4)iohp&m3gv=%r07+*k
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'testserver']
 
 
 # Application definition
@@ -142,6 +142,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
     ],
+    'DEFAULT_PAGINATION_CLASS': 'travel.pagination.StandardPagination',
+    'PAGE_SIZE': 10,
     'EXCEPTION_HANDLER': 'travel.drf_exception_handler.custom_exception_handler',
 }
 
