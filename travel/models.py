@@ -59,7 +59,6 @@ class ProjectPlace(models.Model):
         super().clean()
         if self.project_id is None:
             return
-        # не более 10 мест на проект (новая запись увеличивает счётчик)
         if self.pk is None and self.project.places.count() >= 10:
             raise ValidationError('Maximum 10 places per project.')
 

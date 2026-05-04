@@ -3,6 +3,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from travel.models import ProjectPlace, TravelProject
+from travel.rest_exceptions import Conflict
 from travel.services import ArticService
 
 
@@ -115,6 +116,12 @@ class ProjectPlaceSerializer(serializers.ModelSerializer):
             raise ValidationError({'external_id': 'Not found in Art Institute API.'})
         validated_data['external_id'] = str(data.get('id', external_id))
         validated_data['title'] = (data.get('title') or '')[:512]
+        project = validated_data['project']
+        if ProjectPlace.objects.filter(
+            project=project,
+            external_id=validated_data['external_id'],
+        ).exists():
+            raise Conflict('This artwork is already in the project.')
         return ProjectPlace.objects.create(**validated_data)
 
 
