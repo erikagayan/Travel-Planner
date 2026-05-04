@@ -98,6 +98,14 @@ class ProjectPlaceSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ('id', 'project', 'title', 'added_at')
 
+    def validate(self, attrs):
+        project_pk = self.context.get('project_pk')
+        if project_pk is None or self.instance is not None:
+            return attrs
+        if ProjectPlace.objects.filter(project_id=project_pk).count() >= 10:
+            raise ValidationError('Maximum 10 places per project.')
+        return attrs
+
     @transaction.atomic
     def create(self, validated_data):
         external_id = str(validated_data.pop('external_id')).strip()
