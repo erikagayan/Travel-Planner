@@ -5,12 +5,12 @@ from rest_framework_nested.routers import NestedDefaultRouter
 from travel.views import ProjectPlaceViewSet, TravelProjectViewSet
 
 router = DefaultRouter()
-router.register(r'projects', TravelProjectViewSet, basename='travelproject')
+router.register(r'travel', TravelProjectViewSet, basename='travelproject')
 
-projects_router = NestedDefaultRouter(router, r'projects', lookup='project')
-projects_router.register(r'places', ProjectPlaceViewSet, basename='project-places')
+places_router = NestedDefaultRouter(router, r'travel', lookup='project')
+places_router.register(r'places', ProjectPlaceViewSet, basename='project-places')
 
 urlpatterns = [
     path('v1/', include(router.urls)),
-    path('v1/', include(projects_router.urls)),
+    path('v1/', include(places_router.urls)),
 ]

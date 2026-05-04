@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -26,13 +27,12 @@ class TravelProjectViewSet(viewsets.ModelViewSet):
             return TravelProjectCreateSerializer
         return TravelProjectSerializer
 
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
+    def perform_destroy(self, instance):
         if instance.places.filter(visited=True).exists():
             raise ValidationError(
                 'Cannot delete a project that has visited places.',
             )
-        return super().destroy(request, *args, **kwargs)
+        super().perform_destroy(instance)
 
 
 class ProjectPlaceViewSet(viewsets.ModelViewSet):
@@ -43,6 +43,13 @@ class ProjectPlaceViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return ProjectPlace.objects.filter(project_id=self.kwargs['project_pk'])
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        pk = self.kwargs.get('project_pk')
+        if pk is not None:
+            context['project_pk'] = pk
+        return context
+
     def get_serializer_class(self):
         if self.action in ('update', 'partial_update'):
             return ProjectPlaceUpdateSerializer
@@ -50,4 +57,9 @@ class ProjectPlaceViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         project = get_object_or_404(TravelProject, pk=self.kwargs['project_pk'])
-        serializer.save(project=project)
+        try:
+            serializer.save(project=project)
+        except IntegrityError:
+            raise ValidationError(
+                'This artwork is already in the project.',
+            ) from None
