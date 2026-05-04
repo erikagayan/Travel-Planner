@@ -62,3 +62,8 @@ class ProjectPlaceViewSet(viewsets.ModelViewSet):
             serializer.save(project=project)
         except IntegrityError:
             raise Conflict('This artwork is already in the project.') from None
+        serializer.instance.project.sync_status_from_places()
+
+    def perform_update(self, serializer):
+        super().perform_update(serializer)
+        serializer.instance.project.sync_status_from_places()

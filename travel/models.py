@@ -65,9 +65,6 @@ class ProjectPlace(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
-        self.project.sync_status_from_places()
 
     def delete(self, *args, **kwargs):
-        project = self.project
         super().delete(*args, **kwargs)
-        project.sync_status_from_places()
