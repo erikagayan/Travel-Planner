@@ -15,7 +15,7 @@ ARTWORK_CACHE_KEY = 'artic:artwork:{id}'
 class ArticService:
     BASE = 'https://api.artic.edu/api/v1'
     ARTWORK_FIELDS = 'id,title,place_of_origin'
-    TIMEOUT = 10.0
+    TIMEOUT = 5.0
 
     def __init__(self, timeout: float | None = None):
         self.timeout = self.TIMEOUT if timeout is None else timeout

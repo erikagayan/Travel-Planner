@@ -1,0 +1,162 @@
+{
+	"info": {
+		"name": "Travel Planner API",
+		"description": "Django REST API. Set `base_url`, `api_username`, and `api_password` (HTTP Basic) in the environment. Schema and docs requests override auth to No Auth.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{ "key": "username", "value": "{{api_username}}", "type": "string" },
+			{ "key": "password", "value": "{{api_password}}", "type": "string" }
+		]
+	},
+	"item": [
+		{
+			"name": "Schema & docs",
+			"item": [
+				{
+					"name": "OpenAPI schema (YAML/JSON)",
+					"request": {
+						"auth": { "type": "noauth" },
+						"method": "GET",
+						"header": [
+							{ "key": "Accept", "value": "application/vnd.oai.openapi; version=3.0.0" }
+						],
+						"url": "{{base_url}}/api/schema/"
+					}
+				},
+				{
+					"name": "Swagger UI (open in browser)",
+					"request": {
+						"auth": { "type": "noauth" },
+						"method": "GET",
+						"url": "{{base_url}}/api/docs/"
+					}
+				}
+			]
+		},
+		{
+			"name": "Travel projects",
+			"item": [
+				{
+					"name": "List projects",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/v1/travel/?status=active&page=1"
+					}
+				},
+				{
+					"name": "Create project (optional place_ids)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Chicago weekend\",\n  \"description\": \"Museums\",\n  \"start_date\": null,\n  \"place_ids\": [\"4\", \"5\"]\n}"
+						},
+						"url": "{{base_url}}/api/v1/travel/"
+					}
+				},
+				{
+					"name": "Retrieve project",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/v1/travel/{{project_id}}/"
+					}
+				},
+				{
+					"name": "Update project (PUT)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Chicago weekend (updated)\",\n  \"description\": \"\",\n  \"start_date\": null\n}"
+						},
+						"url": "{{base_url}}/api/v1/travel/{{project_id}}/"
+					}
+				},
+				{
+					"name": "Partial update project (PATCH)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Short trip\"\n}"
+						},
+						"url": "{{base_url}}/api/v1/travel/{{project_id}}/"
+					}
+				},
+				{
+					"name": "Delete project (fails if any place visited)",
+					"request": {
+						"method": "DELETE",
+						"url": "{{base_url}}/api/v1/travel/{{project_id}}/"
+					}
+				}
+			]
+		},
+		{
+			"name": "Places (nested)",
+			"item": [
+				{
+					"name": "List places for project",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/v1/travel/{{project_id}}/places/?visited=false"
+					}
+				},
+				{
+					"name": "Add place (Art Institute artwork id)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"external_id\": \"4\",\n  \"notes\": \"Must see\",\n  \"visited\": false\n}"
+						},
+						"url": "{{base_url}}/api/v1/travel/{{project_id}}/places/"
+					}
+				},
+				{
+					"name": "Retrieve place",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/v1/travel/{{project_id}}/places/{{place_id}}/"
+					}
+				},
+				{
+					"name": "Update place (notes, visited)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"notes\": \"Done\",\n  \"visited\": true\n}"
+						},
+						"url": "{{base_url}}/api/v1/travel/{{project_id}}/places/{{place_id}}/"
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{ "key": "base_url", "value": "http://localhost:8000" },
+		{ "key": "api_username", "value": "" },
+		{ "key": "api_password", "value": "" },
+		{ "key": "project_id", "value": "1" },
+		{ "key": "place_id", "value": "1" }
+	]
+}

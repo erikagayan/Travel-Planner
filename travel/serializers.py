@@ -80,6 +80,7 @@ class TravelProjectCreateSerializer(serializers.ModelSerializer):
                 external_id=eid,
                 title=title,
             )
+        project.sync_status_from_places()
         return project
 
 
